@@ -70,6 +70,7 @@ SELECT * FROM countries WHERE indep_year < 1990 OR population > 100000;
 SELECT * FROM countries WHERE (code = 'DZA' OR code = 'ALB') AND indep_year < 1990;
 -- 問14
 -- 全ての地方をグループ化せずに表示してください。
+SELECT DISTINCT region FROM countries;
 
 -- 問15
 -- 国名と人口を以下のように表示させてください。シングルクォートに注意してください。
@@ -86,58 +87,93 @@ SELECT name, life_expectancy FROM countries WHERE life_expectancy IS NOT NULL OR
 
 -- 問18
 -- 平均寿命が長い順、独立記念日が新しい順に国を表示させてください。
-
+SELECT name,life_expectancy,indep_year FROM countries 
+ORDER BY life_expectancy DESC NULLS LAST, indep_year DESC NULLS LAST;
 
 -- 問19
 -- 全ての国の国コードの一文字目と国名を表示させてください。
-
+SELECT LEFT(code, 1), name FROM countries;
 
 -- 問20
 -- 国名が長いものから順に国名と国名の長さを出力してください。
-
+SELECT name, LENGTH(name) AS name_length FROM countries ORDER BY name_length DESC;
 
 -- 問21
 -- 全ての地方の平均寿命、平均人口を表示してください。(NULLも表示)
-
+SELECT region, AVG(life_expectancy) AS avg_life_expectancy, AVG(population) AS avg_population
+FROM countries
+GROUP BY region;
 
 -- 問22
 -- 全ての地方の最長寿命、最大人口を表示してください。(NULLも表示)
-
+SELECT region,MAX(life_expectancy),MAX(population)
+FROM countries
+GROUP BY region
+ORDER BY region ASC;
 
 -- 問23
 -- アジア大陸の中で最小の表面積を表示してください
-
+SELECT MIN(surface_area) AS アジアの最小表面積 FROM countries WHERE continent = 'Asia';
 
 -- 問24
 -- アジア大陸の表面積の合計を表示してください。
-
+SELECT SUM(surface_area) AS アジア大陸の表面積の合計 FROM countries WHERE continent = 'Asia';
 -- 問25
 -- 全ての国と言語を表示してください。一つの国に複数言語があると思いますので同じ国名を言語数だけ出力してください。
-
+SELECT countries.name, country_languages.language
+FROM countries
+JOIN country_languages ON countries.code = country_languages.country_code;
 
 -- 問26
 -- 全ての国と言語と市区町村を表示してください。
+SELECT c.name AS 国名 , cl.language AS language,ci.name AS 市区町村名 
+FROM countries c
+JOIN country_languages cl ON c.code = cl.country_code
+JOIN cities ci ON cl.country_code = ci.country_code
+ORDER BY c.name ASC;
 
 
 -- 問27
 -- 全ての有名人を出力してください。左側外部結合を使用して国名なし（country_codeがNULL）も表示してください。
-
+SELECT c.name AS 国名 , ce.name AS 有名人
+FROM countries c
+LEFT OUTER JOIN celebrities ce
+ON c.code = ce.country_code;
 
 -- 問28
 -- 全ての有名人の名前,国名、第一言語を出力してください。
-
-
+SELECT ce.name,c.name,cl.language
+FROM  celebrities ce
+JOIN countries c ON ce.country_code = c.code
+JOIN country_languages cl ON c.code = cl.country_code;
 -- 問29
 -- 全ての有名人の名前と国名をに出力してください。 ただしテーブル結合せずサブクエリを使用してください。
-
-
+SELECT ce.name,
+(SELECT c.name
+FROM countries c
+WHERE c.code = ce.country_code)
+FROM celebrities ce;
 -- 問30
 -- 最年長が50歳以上かつ最年少が30歳以下の国を表示させてください。
-
+SELECT name
+FROM countries
+WHERE 
 
 -- 問31
 -- 1991年生まれと、1981年生まれの有名人が何人いるか調べてください。ただし、日付関数は使用せず、UNION句を使用してください。
+SELECT COUNT(*)
+FROM celebrities
+WHERE cast(birth as text) LIKE '1991%'
 
+UNION
+
+SELECT COUNT(*)
+FROM celebrities
+WHERE cast(birth as text) LIKE '1981%';
 
 -- 問32
 -- 有名人の出身国の平均年齢を高い方から順に表示してください。ただし、FROM句はcountriesテーブルとしてください。
+SELECT name
+FROM countries
+JOIN 
+ORDER BY life_expectancy ASC;
