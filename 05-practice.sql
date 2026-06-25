@@ -216,6 +216,6 @@ SELECT c.name, AVG(ce.age)
 FROM countries c
 JOIN celebrities ce ON c.code = ce.country_code
 GROUP BY  c.name
-ORDER BY AVG DESC;
+ORDER BY AVG(ce.age) DESC;
 
 
