@@ -67,17 +67,17 @@ WHERE name LIKE 'An%';
 
 -- 問12
 -- 全国の中から独立記念日が1990年より前または人口が10万人より多い国を全て抽出してください。
---SELECT * FROM countries WHERE indep_year IS NOT NULL AND
---(indep_year < 1990 OR population > 100000);
 SELECT * 
 FROM countries 
 WHERE indep_year < 1990 OR population > 100000;
+
 -- 問13
 -- コードがDZAもしくはALBかつ独立記念日が1990年より前の国を全て抽出してください。
 SELECT * 
 FROM countries 
 WHERE (code = 'DZA' OR code = 'ALB') 
 AND indep_year < 1990;
+
 -- 問14
 -- 全ての地方をグループ化せずに表示してください。
 SELECT region 
@@ -88,6 +88,7 @@ FROM countries;
 -- 「Arubaの人口は103000人です」
 SELECT name || 'の人口は' || population || '人です' AS POULATION
 FROM countries;
+
 -- 問16
 -- 平均寿命が短い順に国名を表示させてください。ただしNULLは表示させないでください。
 SELECT name, life_expectancy 
@@ -141,6 +142,7 @@ WHERE continent = 'Asia';
 SELECT SUM(surface_area) AS アジア大陸の表面積の合計 
 FROM countries 
 WHERE continent = 'Asia';
+
 -- 問25
 -- 全ての国と言語を表示してください。一つの国に複数言語があると思いますので同じ国名を言語数だけ出力してください。
 SELECT countries.name, country_languages.language
@@ -174,6 +176,7 @@ WHERE cl.percentage = (
     FROM country_languages cl2
     WHERE cl2.country_code = cl.country_code
 );
+
 -- 問29
 -- 全ての有名人の名前と国名をに出力してください。 ただしテーブル結合せずサブクエリを使用してください。
 SELECT ce.name,  (
@@ -181,6 +184,7 @@ SELECT ce.name,  (
     FROM countries c
     WHERE c.code = ce.country_code)
 FROM celebrities ce;
+
 -- 問30
 -- 最年長が50歳以上かつ最年少が30歳以下の国を表示させてください。
 
@@ -205,10 +209,13 @@ FROM celebrities
 WHERE cast(birth as text) LIKE '1981%'
 
 GROUP BY birth;
+
 -- 問32
 -- 有名人の出身国の平均年齢を高い方から順に表示してください。ただし、FROM句はcountriesテーブルとしてください。
-SELECT c.name, c.life_expectancy
+SELECT c.name, AVG(ce.age)
 FROM countries c
-JOIN celebrities ce
-ON c.code = ce.country_code
-ORDER BY life_expectancy DESC;
+JOIN celebrities ce ON c.code = ce.country_code
+GROUP BY  c.name
+ORDER BY AVG DESC;
+
+
